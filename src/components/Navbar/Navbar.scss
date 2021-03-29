@@ -1,0 +1,16 @@
+.linksContainers {
+  list-style-type: none;
+  display: flex;
+}
+
+.link {
+  display: inline-block;
+  text-decoration: none;
+  color: grey;
+  margin-right: 1em;
+}
+
+.activeLink {
+  composes: link;
+  color: cyan;
+}
