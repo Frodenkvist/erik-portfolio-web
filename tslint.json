@@ -74,7 +74,8 @@
     "no-import-side-effect": false,
     "no-reserved-keywords": false,
     "no-default-export": false,
-    "jsx-wrap-multiline": false
+    "jsx-wrap-multiline": false,
+    "possible-timing-attack": false
   },
   "jsRules": {
     "max-line-length": {
