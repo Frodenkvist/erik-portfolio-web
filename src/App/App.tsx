@@ -4,6 +4,9 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 import { Navbar } from 'components/Navbar/Navbar';
 import { StartPage } from 'containers/StartPage/StartPage';
+import { Footer } from 'components/Footer/Footer';
+
+import * as styles from './App.scss';
 
 export class App extends React.Component {
   public render() {
@@ -13,11 +16,14 @@ export class App extends React.Component {
 
     return (
       <BrowserRouter basename={`${location.pathname}#`}>
-        <Navbar />
-        <div>
-          <Switch>
-            <Route path="/" component={StartPage} exact={true} />
-          </Switch>
+        <div className={styles.container}>
+          <Navbar />
+          <div>
+            <Switch>
+              <Route path="/" component={StartPage} exact={true} />
+            </Switch>
+          </div>
+          <Footer />
         </div>
       </BrowserRouter>
     );

@@ -2,9 +2,11 @@ import * as React from 'react';
 
 import * as styles from './Navbar.scss';
 
-import { Link } from 'react-router-dom';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 
-export class Navbar extends React.Component {
+interface Props extends RouteComponentProps {}
+
+class NavbarComp extends React.Component<Props> {
   public render() {
     const hash = location.hash;
 
@@ -17,7 +19,17 @@ export class Navbar extends React.Component {
                 className={hash === '#/' ? styles.activeLink : styles.link}
                 to="/"
               >
-                Home
+                HEM
+              </Link>
+            </li>
+            <li>
+              <Link
+                className={
+                  hash === '#/galleri' ? styles.activeLink : styles.link
+                }
+                to="/galleri"
+              >
+                GALLERI
               </Link>
             </li>
             <li>
@@ -27,37 +39,25 @@ export class Navbar extends React.Component {
                 }
                 to="/portfolio"
               >
-                Portfolio
+                PORTFOLIO
+              </Link>
+            </li>
+            <li>
+              <Link
+                className={hash === '#/info' ? styles.activeLink : styles.link}
+                to="/info"
+              >
+                INFO
               </Link>
             </li>
             <li>
               <Link
                 className={
-                  hash === '#/about-erik' ? styles.activeLink : styles.link
+                  hash === '#/kontakt' ? styles.activeLink : styles.link
                 }
-                to="/about-eric"
+                to="/kontakt"
               >
-                About Erik
-              </Link>
-            </li>
-            <li>
-              <Link
-                className={
-                  hash === '#/awards' ? styles.activeLink : styles.link
-                }
-                to="/awards"
-              >
-                Awards
-              </Link>
-            </li>
-            <li>
-              <Link
-                className={
-                  hash === '#/contact' ? styles.activeLink : styles.link
-                }
-                to="/contact"
-              >
-                Contact
+                KONTAKT
               </Link>
             </li>
           </ul>
@@ -66,3 +66,5 @@ export class Navbar extends React.Component {
     );
   }
 }
+
+export const Navbar = withRouter(NavbarComp);

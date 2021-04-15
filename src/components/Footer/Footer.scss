@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.icon {
+  display: inline-block;
+  height: 25px;
+  width: 25px;
+  margin-right: 0.5em;
+  background-repeat: no-repeat;
+}
+
+.facebookIcon {
+  composes: icon;
+  background-image: url('./facebook-icon.svg');
+}
+
+.instagramIcon {
+  composes: icon;
+  background-image: url('./instagram-icon.svg');
+}

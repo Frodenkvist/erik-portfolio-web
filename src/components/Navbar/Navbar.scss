@@ -1,6 +1,7 @@
 .linksContainers {
   list-style-type: none;
   display: flex;
+  justify-content: center;
 }
 
 .link {
@@ -12,5 +13,9 @@
 
 .activeLink {
   composes: link;
+  color: cyan;
+}
+
+.link:hover {
   color: cyan;
 }
