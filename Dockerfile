@@ -7,5 +7,5 @@ RUN npm run build
 
 FROM nginx AS runtime
 
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY --from=build /nginx.conf /etc/nginx/conf.d/default.conf
+COPY /app/dist /usr/share/nginx/html
+COPY /nginx.conf /etc/nginx/conf.d/default.conf
