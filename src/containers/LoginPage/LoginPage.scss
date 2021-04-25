@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.input {
+  margin-bottom: 0.5em;
+  line-height: 2em;
+  border-radius: 0.5em;
+  border: 1px solid grey;
+}
+
+.button {
+  line-height: 2em;
+}
