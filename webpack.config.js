@@ -3,26 +3,26 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
-const srcPath = (subdir) => {
+const srcPath = subdir => {
   return path.join(__dirname, 'src', subdir);
 };
 
 module.exports = () => {
-  const removeEmpty = (array) => array.filter((p) => !!p);
+  const removeEmpty = array => array.filter(p => !!p);
 
   return {
     entry: {
-      app: path.join(__dirname, './src/index.tsx'),
+      app: path.join(__dirname, './src/index.tsx')
     },
     output: {
       filename: '[name].[hash].js',
       chunkFilename: '[name].[hash].chunk.js',
-      path: path.join(__dirname, './dist/'),
+      path: path.join(__dirname, './dist/')
     },
     optimization: {
       splitChunks: {
-        chunks: 'all',
-      },
+        chunks: 'all'
+      }
     },
     devtool: 'source-map',
     resolve: {
@@ -31,15 +31,15 @@ module.exports = () => {
         components: srcPath('components'),
         containers: srcPath('containers'),
         utils: srcPath('utils'),
-        App: srcPath('App'),
-      },
+        App: srcPath('App')
+      }
     },
     devServer: {
       proxy: {
-        '/web/api/**': {
-          target: process.env.REST_URL || 'http://localhost:8890',
-        },
-      },
+        '/api/**': {
+          target: process.env.REST_URL || 'http://localhost:51426'
+        }
+      }
     },
     plugins: removeEmpty([
       new webpack.WatchIgnorePlugin([/css\.d\.ts$/]),
@@ -52,18 +52,18 @@ module.exports = () => {
       new HtmlWebpackPlugin({
         template: path.join(__dirname, './public/index.html'),
         filename: 'index.html',
-        inject: 'body',
+        inject: 'body'
       }),
       new webpack.ProvidePlugin({
         fetch:
-          'imports-loader?this=>global!exports-loader?global.fetch!whatwg-fetch/dist/fetch.umd',
+          'imports-loader?this=>global!exports-loader?global.fetch!whatwg-fetch/dist/fetch.umd'
       }),
       new CopyPlugin([
         {
           from: 'public/polyfill.min.js',
-          to: '.',
-        },
-      ]),
+          to: '.'
+        }
+      ])
     ]),
     module: {
       rules: [
@@ -76,16 +76,16 @@ module.exports = () => {
               options: {
                 modules: true,
                 namedExport: true,
-                localIdentName: '[path][name]__[local]--[hash:base64:5]',
-              },
+                localIdentName: '[path][name]__[local]--[hash:base64:5]'
+              }
             },
             'postcss-loader',
-            'sass-loader',
-          ],
+            'sass-loader'
+          ]
         },
         {
           test: /\.tsx?$/,
-          loader: 'babel-loader',
+          loader: 'babel-loader'
         },
         {
           test: /\.(gif|png|jpe?g|svg)$/i,
@@ -94,17 +94,17 @@ module.exports = () => {
             {
               loader: 'image-webpack-loader',
               options: {
-                disable: true,
-              },
-            },
-          ],
+                disable: true
+              }
+            }
+          ]
         },
         {
           enforce: 'pre',
           test: /\.js$/,
-          loader: 'source-map-loader',
-        },
-      ],
-    },
+          loader: 'source-map-loader'
+        }
+      ]
+    }
   };
 };

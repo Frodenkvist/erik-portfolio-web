@@ -1,7 +1,36 @@
 import * as React from 'react';
 
-export class StartPage extends React.Component {
+interface EncodedPhoto {
+  id: number;
+  data: string;
+}
+
+interface State {
+  encodedPhotos: EncodedPhoto[];
+}
+
+export class StartPage extends React.Component<{}, State> {
+  constructor(props: {}) {
+    super(props);
+
+    this.state = {
+      encodedPhotos: []
+    };
+  }
+
+  componentDidMount() {
+    fetch('/api/photo')
+      .then(response => response.json())
+      .then((photos: EncodedPhoto[]) =>
+        this.setState({
+          encodedPhotos: photos
+        })
+      );
+  }
+
   public render() {
+    const { encodedPhotos } = this.state;
+
     return (
       <div>
         <div
@@ -25,6 +54,9 @@ export class StartPage extends React.Component {
           </blockquote>
         </div>
         <div id="pixlee_container"></div>
+        {encodedPhotos.map(ep => {
+          return <img key={`photo-${ep.id}`} src={ep.data} />;
+        })}
       </div>
     );
   }
