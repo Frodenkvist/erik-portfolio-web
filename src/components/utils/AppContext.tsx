@@ -8,7 +8,7 @@ export interface UserContext {
 export interface AppContext {
   addGlass: () => void;
   removeGlass: () => void;
-  setUserContext: (userContext: UserContext) => void;
+  setUserContext: (userContext: UserContext, callback: () => void) => void;
 }
 
 const context = React.createContext<AppContext>({
@@ -18,7 +18,7 @@ const context = React.createContext<AppContext>({
   removeGlass: () => {
     //default body
   },
-  setUserContext: (userContext: UserContext) => {
+  setUserContext: (userContext: UserContext, callback: () => void) => {
     //default body
   }
 });

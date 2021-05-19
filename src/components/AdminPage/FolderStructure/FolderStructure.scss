@@ -1,0 +1,21 @@
+.folderRow {
+  cursor: pointer;
+}
+
+.folderCell {
+  display: inline-block;
+}
+
+.folderTable {
+  text-align: left;
+}
+
+.folderButtonImg {
+  margin-right: 0.3em;
+}
+
+.selectedFolderRow {
+  composes: folderRow;
+  background-color: rgb(56, 117, 215);
+  color: white;
+}

@@ -4,8 +4,9 @@ import * as styles from './LoginPage.scss';
 
 import { Base64 } from 'js-base64';
 import { AppContext, withAppContext } from 'components/utils/AppContext';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 
-interface Props {
+interface Props extends RouteComponentProps {
   appContext: AppContext;
 }
 
@@ -74,8 +75,10 @@ export class LoginPageComp extends React.Component<Props, State> {
   }
 
   public onClickLogin() {
+    const { appContext } = this.props;
     const { username, password } = this.state;
 
+    appContext.addGlass();
     fetch('/api/auth/login', {
       body: JSON.stringify({
         username,
@@ -90,12 +93,28 @@ export class LoginPageComp extends React.Component<Props, State> {
       .then((json: { token: string }) => {
         const { appContext } = this.props;
 
-        appContext.setUserContext({
-          ...JSON.parse(Base64.decode(json.token.split('.')[1])),
-          jwt: json.token
-        });
+        const date = new Date();
+        date.setTime(date.getTime() + 365 * 24 * 60 * 60 * 1000);
+        document.cookie = `JWT=${
+          json.token
+        };expires=${date.toUTCString()};path=/`;
+
+        appContext.setUserContext(
+          {
+            ...JSON.parse(Base64.decode(json.token.split('.')[1])),
+            jwt: json.token
+          },
+          () => {
+            const { history } = this.props;
+
+            history.push('/admin');
+          }
+        );
+      })
+      .finally(() => {
+        appContext.removeGlass();
       });
   }
 }
 
-export const LoginPage = withAppContext(LoginPageComp);
+export const LoginPage = withAppContext(withRouter(LoginPageComp));
