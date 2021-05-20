@@ -4,6 +4,12 @@ import * as styles from './AdminPage.scss';
 
 import { FolderStructure } from 'components/AdminPage/FolderStructure/FolderStructure';
 import { AppContext, withAppContext } from 'components/utils/AppContext';
+import { PhotoStructure } from 'components/AdminPage/PhotoStructure/PhotoStructure';
+
+export interface Photo {
+  id: number;
+  name: string;
+}
 
 export interface Folder {
   id: number;
@@ -19,6 +25,8 @@ interface State {
   folders: Folder[];
   selectedFolder: Folder | null;
   addFolderName: string;
+  photos: Photo[];
+  selectedPhoto: Photo | null;
 }
 
 class AdminPageComp extends React.Component<Props, State> {
@@ -28,7 +36,9 @@ class AdminPageComp extends React.Component<Props, State> {
     this.state = {
       folders: [],
       selectedFolder: null,
-      addFolderName: ''
+      addFolderName: '',
+      photos: [],
+      selectedPhoto: null
     };
 
     this.onClickAdd = this.onClickAdd.bind(this);
@@ -39,6 +49,13 @@ class AdminPageComp extends React.Component<Props, State> {
     this.onClickRemove = this.onClickRemove.bind(this);
     this.onClickRemoveFolder = this.onClickRemoveFolder.bind(this);
     this.onKeyDownAddFolder = this.onKeyDownAddFolder.bind(this);
+    this.setSelectedPhoto = this.setSelectedPhoto.bind(this);
+    this.onDragEnter = this.onDragEnter.bind(this);
+    this.onDragLeave = this.onDragLeave.bind(this);
+    this.onDragOver = this.onDragOver.bind(this);
+    this.onDrop = this.onDrop.bind(this);
+    this.onClickRemovePhotoButton = this.onClickRemovePhotoButton.bind(this);
+    this.onClickRemovePhoto = this.onClickRemovePhoto.bind(this);
   }
 
   public componentDidMount() {
@@ -46,7 +63,7 @@ class AdminPageComp extends React.Component<Props, State> {
   }
 
   public render() {
-    const { folders, selectedFolder } = this.state;
+    const { folders, selectedFolder, photos, selectedPhoto } = this.state;
 
     return (
       <div className={styles.container}>
@@ -65,7 +82,27 @@ class AdminPageComp extends React.Component<Props, State> {
             />
           </div>
         </div>
-        <div></div>
+        <div
+          className={styles.rightContainer}
+          onDragEnter={this.onDragEnter}
+          onDragOver={this.onDragEnter}
+          onDragLeave={this.onDragLeave}
+          onDrop={this.onDrop}
+        >
+          <button
+            disabled={!selectedPhoto}
+            onClick={this.onClickRemovePhotoButton}
+          >
+            - Remove
+          </button>
+          <div className={styles.photoContainer}>
+            <PhotoStructure
+              photos={photos}
+              selectedPhoto={selectedPhoto}
+              setSelectedPhoto={this.setSelectedPhoto}
+            />
+          </div>
+        </div>
       </div>
     );
   }
@@ -76,9 +113,28 @@ class AdminPageComp extends React.Component<Props, State> {
       .then((json: Folder[]) => this.setState({ folders: json }));
   }
 
+  private fetchPhotos() {
+    const { selectedFolder } = this.state;
+
+    if (selectedFolder === null) return;
+
+    fetch(`/api/photo/${selectedFolder.id}`)
+      .then(response => response.json())
+      .then((photos: Photo[]) => this.setState({ photos }));
+  }
+
   private setSelectedFolder(folder: Folder) {
+    this.setState(
+      {
+        selectedFolder: folder
+      },
+      () => this.fetchPhotos()
+    );
+  }
+
+  private setSelectedPhoto(photo: Photo) {
     this.setState({
-      selectedFolder: folder
+      selectedPhoto: photo
     });
   }
 
@@ -189,6 +245,89 @@ class AdminPageComp extends React.Component<Props, State> {
     if (event.key === 'Enter') {
       this.onClickAddFolder();
     }
+  }
+
+  private onClickRemovePhotoButton() {
+    const { appContext } = this.props;
+    const { selectedPhoto } = this.state;
+
+    appContext.addNotification({
+      autoCloseOnClick: false,
+      content: (
+        <div>
+          <h3>Are you sure you want to remove photo: {selectedPhoto?.name}?</h3>
+          <div className={styles.buttonContainer}>
+            <button onClick={this.onClickRemovePhoto} className={styles.button}>
+              Remove Photo
+            </button>
+            <button onClick={this.onClickCancel}>Cancel</button>
+          </div>
+        </div>
+      )
+    });
+  }
+
+  private onClickRemovePhoto() {
+    const { appContext } = this.props;
+    const { selectedPhoto } = this.state;
+
+    fetch(`/api/photo/${selectedPhoto?.id}`, {
+      method: 'DELETE'
+    }).then(response => {
+      if (response.status !== 204) {
+        console.error('something went wrong!');
+      }
+
+      this.fetchPhotos();
+      appContext.removeNotification();
+    });
+  }
+
+  private onDragEnter(event: React.DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  private onDragLeave(event: React.DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  private onDragOver(event: React.DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  private onDrop(event: React.DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const { selectedFolder } = this.state;
+
+    if (selectedFolder === null) return;
+
+    const dataTransfer = event.dataTransfer;
+    const files = event.dataTransfer.files;
+
+    const uploads: Promise<any>[] = [];
+
+    Array.from(files).forEach(file => {
+      const formData = new FormData();
+
+      formData.append('file', file);
+      formData.append('parentFolderId', selectedFolder.id.toString());
+
+      uploads.push(
+        fetch('/api/photo', {
+          method: 'POST',
+          body: formData
+        }).then(response => response.json())
+      );
+    });
+
+    Promise.all(uploads).then(() => {
+      this.fetchPhotos();
+    });
   }
 }
 

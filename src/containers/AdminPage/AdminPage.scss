@@ -4,6 +4,9 @@
 
 .leftContainer {
   text-align: left;
+  border: 0.1em solid black;
+  min-height: 80vh;
+  width: 30%;
 }
 
 .folderContainer {
@@ -16,4 +19,15 @@
 
 .button {
   margin-right: 0.5em;
+}
+
+.rightContainer {
+  text-align: left;
+  border: 0.1em solid black;
+  min-height: 80vh;
+  width: 70%;
+}
+
+.photoContainer {
+  margin-top: 1em;
 }
