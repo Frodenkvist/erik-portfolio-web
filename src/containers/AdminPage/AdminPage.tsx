@@ -27,6 +27,9 @@ interface State {
   addFolderName: string;
   photos: Photo[];
   selectedPhoto: Photo | null;
+  uploading: boolean;
+  amountUploading: number;
+  amountUploaded: number;
 }
 
 class AdminPageComp extends React.Component<Props, State> {
@@ -38,7 +41,10 @@ class AdminPageComp extends React.Component<Props, State> {
       selectedFolder: null,
       addFolderName: '',
       photos: [],
-      selectedPhoto: null
+      selectedPhoto: null,
+      uploading: false,
+      amountUploading: 0,
+      amountUploaded: 0
     };
 
     this.onClickAdd = this.onClickAdd.bind(this);
@@ -63,7 +69,15 @@ class AdminPageComp extends React.Component<Props, State> {
   }
 
   public render() {
-    const { folders, selectedFolder, photos, selectedPhoto } = this.state;
+    const {
+      folders,
+      selectedFolder,
+      photos,
+      selectedPhoto,
+      uploading,
+      amountUploaded,
+      amountUploading
+    } = this.state;
 
     return (
       <div className={styles.container}>
@@ -96,6 +110,12 @@ class AdminPageComp extends React.Component<Props, State> {
             - Remove
           </button>
           <div className={styles.photoContainer}>
+            {uploading ? (
+              <progress
+                max={100}
+                value={(amountUploading / amountUploaded) * 100}
+              />
+            ) : null}
             <PhotoStructure
               photos={photos}
               selectedPhoto={selectedPhoto}
@@ -313,8 +333,13 @@ class AdminPageComp extends React.Component<Props, State> {
 
     if (selectedFolder === null) return;
 
-    const dataTransfer = event.dataTransfer;
     const files = event.dataTransfer.files;
+
+    this.setState({
+      uploading: true,
+      amountUploaded: 0,
+      amountUploading: files.length
+    });
 
     const uploads: Promise<any>[] = [];
 
@@ -328,11 +353,16 @@ class AdminPageComp extends React.Component<Props, State> {
         fetch('/api/photo', {
           method: 'POST',
           body: formData
-        }).then(response => response.json())
+        })
+          .then(response => response.json())
+          .then(() =>
+            this.setState({ amountUploaded: this.state.amountUploaded + 1 })
+          )
       );
     });
 
     Promise.all(uploads).then(() => {
+      this.setState({ uploading: false });
       this.fetchPhotos();
     });
   }
