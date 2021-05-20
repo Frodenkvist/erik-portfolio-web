@@ -118,7 +118,7 @@ class AdminPageComp extends React.Component<Props, State> {
 
     if (selectedFolder === null) return;
 
-    fetch(`/api/photo/${selectedFolder.id}`)
+    fetch(`/api/photo/present/${selectedFolder.id}`)
       .then(response => response.json())
       .then((photos: Photo[]) => this.setState({ photos }));
   }
@@ -231,7 +231,8 @@ class AdminPageComp extends React.Component<Props, State> {
       }
 
       this.setState({
-        selectedFolder: null
+        selectedFolder: null,
+        photos: []
       });
       this.fetchFolders();
       appContext.removeNotification();
