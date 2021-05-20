@@ -15,6 +15,10 @@ import { AdminPage } from 'containers/AdminPage/AdminPage';
 import { AppContextProvider, UserContext } from 'components/utils/AppContext';
 
 import * as styles from './App.scss';
+import {
+  ScreenNotification,
+  ScreenNotificationWrapper
+} from 'components/ScreenNotification/ScreenNotification';
 
 const getCookie = (name: string): string | null => {
   const nameLenPlus = name.length + 1;
@@ -34,6 +38,7 @@ const getCookie = (name: string): string | null => {
 interface State {
   userContext: UserContext | null;
   glassCount: number;
+  notification: ScreenNotificationWrapper | null;
 }
 
 export class App extends React.Component<{}, State> {
@@ -42,12 +47,15 @@ export class App extends React.Component<{}, State> {
 
     this.state = {
       userContext: null,
-      glassCount: 0
+      glassCount: 0,
+      notification: null
     };
 
     this.addGlass = this.addGlass.bind(this);
     this.removeGlass = this.removeGlass.bind(this);
     this.setUserContext = this.setUserContext.bind(this);
+    this.addNotification = this.addNotification.bind(this);
+    this.removeNotification = this.removeNotification.bind(this);
   }
 
   public componentDidMount() {
@@ -63,7 +71,7 @@ export class App extends React.Component<{}, State> {
   }
 
   public render() {
-    const { glassCount, userContext } = this.state;
+    const { glassCount, userContext, notification } = this.state;
 
     if (location.hash === '') {
       window.history.pushState({}, '', `${location.pathname}#/`);
@@ -75,11 +83,16 @@ export class App extends React.Component<{}, State> {
           value={{
             addGlass: this.addGlass,
             removeGlass: this.removeGlass,
-            setUserContext: this.setUserContext
+            setUserContext: this.setUserContext,
+            addNotification: this.addNotification,
+            removeNotification: this.removeNotification
           }}
         >
           <div className={styles.container}>
             {glassCount > 0 ? <Glass /> : null}
+            {notification ? (
+              <ScreenNotification notification={notification} />
+            ) : null}
             <Navbar />
             <div>
               <Switch>
@@ -118,5 +131,17 @@ export class App extends React.Component<{}, State> {
       },
       callback
     );
+  }
+
+  private addNotification(notification: ScreenNotificationWrapper) {
+    this.setState({
+      notification
+    });
+  }
+
+  private removeNotification() {
+    this.setState({
+      notification: null
+    });
   }
 }

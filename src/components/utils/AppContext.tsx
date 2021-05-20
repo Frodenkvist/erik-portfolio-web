@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { ScreenNotificationWrapper } from 'components/ScreenNotification/ScreenNotification';
+
 export interface UserContext {
   jwt: string;
   username: string;
@@ -9,6 +11,8 @@ export interface AppContext {
   addGlass: () => void;
   removeGlass: () => void;
   setUserContext: (userContext: UserContext, callback: () => void) => void;
+  addNotification: (notificaiton: ScreenNotificationWrapper) => void;
+  removeNotification: () => void;
 }
 
 const context = React.createContext<AppContext>({
@@ -19,6 +23,12 @@ const context = React.createContext<AppContext>({
     //default body
   },
   setUserContext: (userContext: UserContext, callback: () => void) => {
+    //default body
+  },
+  addNotification: (notification: ScreenNotificationWrapper) => {
+    //default body
+  },
+  removeNotification: () => {
     //default body
   }
 });

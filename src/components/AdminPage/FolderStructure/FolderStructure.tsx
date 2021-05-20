@@ -9,11 +9,12 @@ import unexpandedButton from './unexpanded-button.svg';
 
 interface Props {
   folders: Folder[];
+  selectedFolder: Folder | null;
+  setSelectedFolder: (folder: Folder) => void;
 }
 
 interface State {
   expandedFolders: number[];
-  selectedFolder: Folder | null;
 }
 
 export class FolderStructure extends React.Component<Props, State> {
@@ -21,8 +22,7 @@ export class FolderStructure extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      expandedFolders: [],
-      selectedFolder: null
+      expandedFolders: []
     };
 
     this.onClickFolder = this.onClickFolder.bind(this);
@@ -46,7 +46,8 @@ export class FolderStructure extends React.Component<Props, State> {
   }
 
   private renderFolder(folder: Folder, depth: number = 0) {
-    const { expandedFolders, selectedFolder } = this.state;
+    const { selectedFolder } = this.props;
+    const { expandedFolders } = this.state;
 
     const isExpanded = expandedFolders.includes(folder.id);
     const hasChildren = folder.children.length > 0;
@@ -92,6 +93,7 @@ export class FolderStructure extends React.Component<Props, State> {
   private onClickFolder(folder: Folder) {
     return () => {
       const { expandedFolders } = this.state;
+      const { setSelectedFolder } = this.props;
 
       if (folder.children.length > 0) {
         const index = expandedFolders.indexOf(folder.id);
@@ -104,13 +106,9 @@ export class FolderStructure extends React.Component<Props, State> {
         this.setState({
           expandedFolders
         });
-
-        return;
       }
 
-      this.setState({
-        selectedFolder: folder
-      });
+      setSelectedFolder(folder);
     };
   }
 }
