@@ -230,6 +230,9 @@ class AdminPageComp extends React.Component<Props, State> {
         console.error('something went wrong!');
       }
 
+      this.setState({
+        selectedFolder: null
+      });
       this.fetchFolders();
       appContext.removeNotification();
     });
@@ -278,6 +281,9 @@ class AdminPageComp extends React.Component<Props, State> {
         console.error('something went wrong!');
       }
 
+      this.setState({
+        selectedPhoto: null
+      });
       this.fetchPhotos();
       appContext.removeNotification();
     });
