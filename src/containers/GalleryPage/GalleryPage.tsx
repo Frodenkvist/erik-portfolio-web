@@ -63,14 +63,7 @@ class GalleryPageComp extends React.Component<Props, State> {
     return (
       <div>
         {photos.map(photo => {
-          return (
-            <img
-              key={photo.id}
-              src={photo.data}
-              height={1000}
-              width={1000}
-            ></img>
-          );
+          return <img key={photo.id} src={photo.data}></img>;
         })}
       </div>
     );
