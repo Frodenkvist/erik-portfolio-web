@@ -30,9 +30,19 @@ class GalleryPageComp extends React.Component<Props, State> {
   componentDidMount() {
     const { folderId } = this.props.match.params;
 
-    fetch(`/api/photo/encoded/${folderId}`)
+    fetch(`/api/photo/present/${folderId}`)
       .then(response => response.json())
-      .then((json: EncodedPhoto[]) => this.setState({ photos: json }));
+      .then((json: { id: number }[]) => {
+        json.forEach(j => {
+          fetch(`/api/photo/encoded/${j.id}`)
+            .then(response => response.json())
+            .then((photo: EncodedPhoto) => {
+              const photos = this.state.photos;
+              photos.push(photo);
+              this.setState({ photos });
+            });
+        });
+      });
   }
 
   componentDidUpdate(prevProps: Props) {
