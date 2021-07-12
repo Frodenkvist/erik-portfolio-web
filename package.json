@@ -30,6 +30,7 @@
     "@types/react-datepicker": "^2.9.2",
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^4.3.5",
+    "@types/react-transition-group": "^4.4.2",
     "@types/webpack": "^4.39.1",
     "autoprefixer": "^9.6.1",
     "babel-loader": "^8.0.6",
@@ -66,7 +67,9 @@
     "js-base64": "^3.6.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-popper": "^2.2.5",
     "react-router-dom": "^5.0.1",
+    "react-transition-group": "^4.4.2",
     "whatwg-fetch": "^3.0.0"
   },
   "browserslist": {

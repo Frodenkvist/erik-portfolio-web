@@ -9,6 +9,8 @@
   text-decoration: none;
   color: grey;
   margin-right: 1em;
+  background-color: white;
+  cursor: pointer;
 }
 
 .activeLink {
@@ -18,4 +20,10 @@
 
 .link:hover {
   color: cyan;
+}
+
+.submenuContainer {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
 }

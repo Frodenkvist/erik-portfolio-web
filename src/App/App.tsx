@@ -11,6 +11,7 @@ import { Glass } from 'components/Glass/Glass';
 import { StartPage } from 'containers/StartPage/StartPage';
 import { LoginPage } from 'containers/LoginPage/LoginPage';
 import { AdminPage } from 'containers/AdminPage/AdminPage';
+import { GalleryPage } from 'containers/GalleryPage/GalleryPage';
 
 import { AppContextProvider, UserContext } from 'components/utils/AppContext';
 
@@ -103,6 +104,7 @@ export class App extends React.Component<{}, State> {
                   component={AdminPage}
                   access={!!userContext}
                 />
+                <Route path="/galleri/:folderId" component={GalleryPage} />
               </Switch>
             </div>
             <Footer />

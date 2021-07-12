@@ -14,7 +14,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUnusedLocals": true,
     "strictPropertyInitialization": true,
-    "baseUrl": "src"
+    "baseUrl": "src",
+    "downlevelIteration": true
   },
   "include": ["./src/*/", "webpack-prod.config.js", "webpack-dev.config.js"],
   "exclude": ["node_modules"]

@@ -1,0 +1,11 @@
+.menuLink {
+  cursor: pointer;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  border-radius: var(--border-radius);
+  transition: background var(--speed);
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  filter: none;
+}

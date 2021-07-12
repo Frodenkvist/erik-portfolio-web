@@ -3,11 +3,41 @@ import * as React from 'react';
 import * as styles from './Navbar.scss';
 
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
+import { Folder } from 'containers/AdminPage/AdminPage';
+import { FolderSubmenu } from 'components/FolderSubmenu/FolderSubmenu';
 
 interface Props extends RouteComponentProps {}
 
-class NavbarComp extends React.Component<Props> {
+interface State {
+  folders: Folder[];
+  isGalleriOpen: boolean;
+}
+
+class NavbarComp extends React.Component<Props, State> {
+  private linkRef: React.RefObject<HTMLAnchorElement>;
+
+  constructor(props: Props) {
+    super(props);
+
+    this.linkRef = React.createRef();
+
+    this.state = {
+      folders: [],
+      isGalleriOpen: false
+    };
+
+    this.onClickGalleri = this.onClickGalleri.bind(this);
+    this.closeGalleri = this.closeGalleri.bind(this);
+  }
+
+  componentDidMount() {
+    fetch('/api/folder/structure')
+      .then(response => response.json())
+      .then((folders: Folder[]) => this.setState({ folders }));
+  }
+
   public render() {
+    const { isGalleriOpen, folders } = this.state;
     const hash = location.hash;
 
     return (
@@ -23,14 +53,22 @@ class NavbarComp extends React.Component<Props> {
               </Link>
             </li>
             <li>
-              <Link
+              <a
+                ref={this.linkRef}
                 className={
-                  hash === '#/galleri' ? styles.activeLink : styles.link
+                  hash.startsWith('#/galleri') ? styles.activeLink : styles.link
                 }
-                to="/galleri"
+                onClick={this.onClickGalleri}
               >
                 GALLERI
-              </Link>
+              </a>
+              {isGalleriOpen && (
+                <FolderSubmenu
+                  folders={folders}
+                  closeSubmenu={this.closeGalleri}
+                  linkRef={this.linkRef}
+                />
+              )}
             </li>
             <li>
               <Link
@@ -64,6 +102,18 @@ class NavbarComp extends React.Component<Props> {
         </nav>
       </div>
     );
+  }
+
+  private onClickGalleri() {
+    this.setState({
+      isGalleriOpen: !this.state.isGalleriOpen
+    });
+  }
+
+  private closeGalleri() {
+    this.setState({
+      isGalleriOpen: false
+    });
   }
 }
 
