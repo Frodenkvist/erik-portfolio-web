@@ -5,6 +5,7 @@ import * as styles from './AdminPage.scss';
 import { FolderStructure } from 'components/AdminPage/FolderStructure/FolderStructure';
 import { AppContext, withAppContext } from 'components/utils/AppContext';
 import { PhotoStructure } from 'components/AdminPage/PhotoStructure/PhotoStructure';
+import { selectedFolderRow } from 'components/AdminPage/FolderStructure/FolderStructure.scss';
 
 export interface Photo {
   id: number;
@@ -30,6 +31,7 @@ interface State {
   uploading: boolean;
   amountUploading: number;
   amountUploaded: number;
+  renameFolderName: string;
 }
 
 class AdminPageComp extends React.Component<Props, State> {
@@ -44,7 +46,8 @@ class AdminPageComp extends React.Component<Props, State> {
       selectedPhoto: null,
       uploading: false,
       amountUploading: 0,
-      amountUploaded: 0
+      amountUploaded: 0,
+      renameFolderName: ''
     };
 
     this.onClickAdd = this.onClickAdd.bind(this);
@@ -62,6 +65,10 @@ class AdminPageComp extends React.Component<Props, State> {
     this.onDrop = this.onDrop.bind(this);
     this.onClickRemovePhotoButton = this.onClickRemovePhotoButton.bind(this);
     this.onClickRemovePhoto = this.onClickRemovePhoto.bind(this);
+    this.onChangeRenameFolderName = this.onChangeRenameFolderName.bind(this);
+    this.onKeyDownRenameFolder = this.onKeyDownRenameFolder.bind(this);
+    this.onClickRename = this.onClickRename.bind(this);
+    this.onClickRenameFolder = this.onClickRenameFolder.bind(this);
   }
 
   public componentDidMount() {
@@ -85,8 +92,15 @@ class AdminPageComp extends React.Component<Props, State> {
           <button className={styles.button} onClick={this.onClickAdd}>
             + Add
           </button>
-          <button disabled={!selectedFolder} onClick={this.onClickRemove}>
+          <button
+            className={styles.button}
+            disabled={!selectedFolder}
+            onClick={this.onClickRemove}
+          >
             - Remove
+          </button>
+          <button disabled={!selectedFolder} onClick={this.onClickRename}>
+            Rename
           </button>
           <div className={styles.folderContainer}>
             <FolderStructure
@@ -210,6 +224,69 @@ class AdminPageComp extends React.Component<Props, State> {
         </div>
       )
     });
+  }
+
+  private onClickRename() {
+    const { appContext } = this.props;
+    const { selectedFolder } = this.state;
+
+    appContext.addNotification({
+      autoCloseOnClick: false,
+      content: (
+        <div>
+          <h3>Rename Folder {selectedFolder?.name}</h3>
+          <div>
+            <label htmlFor="renameFolderName">Folder Name: </label>
+            <input
+              id="renameFolderName"
+              onChange={this.onChangeRenameFolderName}
+              type="text"
+              onKeyDown={this.onKeyDownRenameFolder}
+              autoFocus={true}
+            />
+          </div>
+          <div className={styles.buttonContainer}>
+            <button
+              onClick={this.onClickRenameFolder}
+              className={styles.button}
+            >
+              Rename Folder
+            </button>
+            <button onClick={this.onClickCancel}>Cancel</button>
+          </div>
+        </div>
+      )
+    });
+  }
+
+  private onClickRenameFolder() {
+    const { appContext } = this.props;
+    const { renameFolderName, selectedFolder } = this.state;
+
+    fetch(`/api/folder/${selectedFolder?.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: renameFolderName
+      })
+    }).then(() => {
+      this.fetchFolders();
+      appContext.removeNotification();
+    });
+  }
+
+  private onChangeRenameFolderName(event: React.FormEvent<HTMLInputElement>) {
+    this.setState({
+      renameFolderName: event.currentTarget.value
+    });
+  }
+
+  private onKeyDownRenameFolder(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === 'Enter') {
+      this.onClickRenameFolder();
+    }
   }
 
   private onChangeAddFolderName(event: React.FormEvent<HTMLInputElement>) {
