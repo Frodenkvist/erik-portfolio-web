@@ -5,18 +5,7 @@ import * as styles from './AdminPage.scss';
 import { FolderStructure } from 'components/AdminPage/FolderStructure/FolderStructure';
 import { AppContext, withAppContext } from 'components/utils/AppContext';
 import { PhotoStructure } from 'components/AdminPage/PhotoStructure/PhotoStructure';
-import { selectedFolderRow } from 'components/AdminPage/FolderStructure/FolderStructure.scss';
-
-export interface Photo {
-  id: number;
-  name: string;
-}
-
-export interface Folder {
-  id: number;
-  name: string;
-  children: Folder[];
-}
+import { flattenFolderStructure } from 'utils/utils';
 
 interface Props {
   appContext: AppContext;
@@ -69,6 +58,8 @@ class AdminPageComp extends React.Component<Props, State> {
     this.onKeyDownRenameFolder = this.onKeyDownRenameFolder.bind(this);
     this.onClickRename = this.onClickRename.bind(this);
     this.onClickRenameFolder = this.onClickRenameFolder.bind(this);
+    this.onClickFolderUp = this.onClickFolderUp.bind(this);
+    this.onClickFolderDown = this.onClickFolderDown.bind(this);
   }
 
   public componentDidMount() {
@@ -99,8 +90,22 @@ class AdminPageComp extends React.Component<Props, State> {
           >
             - Remove
           </button>
-          <button disabled={!selectedFolder} onClick={this.onClickRename}>
+          <button
+            className={styles.button}
+            disabled={!selectedFolder}
+            onClick={this.onClickRename}
+          >
             Rename
+          </button>
+          <button
+            className={styles.button}
+            disabled={!selectedFolder}
+            onClick={this.onClickFolderUp}
+          >
+            Up
+          </button>
+          <button disabled={!selectedFolder} onClick={this.onClickFolderDown}>
+            Down
           </button>
           <div className={styles.folderContainer}>
             <FolderStructure
@@ -224,6 +229,42 @@ class AdminPageComp extends React.Component<Props, State> {
         </div>
       )
     });
+  }
+
+  private onClickFolderUp() {
+    const { selectedFolder } = this.state;
+
+    if (!selectedFolder) return;
+
+    fetch(`/api/folder/${selectedFolder.id}/order`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        order: Math.max(selectedFolder.order - 1, 0)
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => this.fetchFolders());
+  }
+
+  private onClickFolderDown() {
+    const { selectedFolder, folders } = this.state;
+
+    if (!selectedFolder) return;
+
+    const size = flattenFolderStructure(folders).filter(
+      f => f.parentFolderId === selectedFolder.parentFolderId
+    ).length;
+
+    fetch(`/api/folder/${selectedFolder.id}/order`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        order: Math.min(selectedFolder.order + 1, size - 1)
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => this.fetchFolders());
   }
 
   private onClickRename() {

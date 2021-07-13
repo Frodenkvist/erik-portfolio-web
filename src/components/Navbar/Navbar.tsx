@@ -3,7 +3,6 @@ import * as React from 'react';
 import * as styles from './Navbar.scss';
 
 import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
-import { Folder } from 'containers/AdminPage/AdminPage';
 import { FolderSubmenu } from 'components/FolderSubmenu/FolderSubmenu';
 
 interface Props extends RouteComponentProps {}

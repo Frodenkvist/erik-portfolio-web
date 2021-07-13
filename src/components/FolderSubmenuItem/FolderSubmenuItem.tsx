@@ -2,7 +2,6 @@ import * as React from 'react';
 
 import * as styles from './FolderSubmenuItem.scss';
 
-import { Folder } from 'containers/AdminPage/AdminPage';
 import { Link } from 'react-router-dom';
 
 interface Props {

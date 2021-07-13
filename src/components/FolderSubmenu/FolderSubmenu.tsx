@@ -3,7 +3,6 @@ import * as styles from './FolderSubmenu.scss';
 
 import { CSSTransition } from 'react-transition-group';
 
-import { Folder } from 'containers/AdminPage/AdminPage';
 import { FolderSubmenuItem } from 'components/FolderSubmenuItem/FolderSubmenuItem';
 
 interface Menu {
