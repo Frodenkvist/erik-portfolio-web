@@ -2,12 +2,6 @@ import * as React from 'react';
 
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
-interface EncodedPhoto {
-  id: number;
-  name: string;
-  data: string;
-}
-
 interface Params {
   folderId: string;
 }
@@ -39,7 +33,11 @@ class GalleryPageComp extends React.Component<Props, State> {
             .then((photo: EncodedPhoto) => {
               const photos = this.state.photos;
               photos.push(photo);
-              this.setState({ photos });
+              this.setState({
+                photos: photos.sort(
+                  (a: EncodedPhoto, b: EncodedPhoto) => a.order - b.order
+                )
+              });
             });
         });
       });

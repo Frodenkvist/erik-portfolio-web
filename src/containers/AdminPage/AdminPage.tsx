@@ -60,6 +60,8 @@ class AdminPageComp extends React.Component<Props, State> {
     this.onClickRenameFolder = this.onClickRenameFolder.bind(this);
     this.onClickFolderUp = this.onClickFolderUp.bind(this);
     this.onClickFolderDown = this.onClickFolderDown.bind(this);
+    this.onClickPhotoUp = this.onClickPhotoUp.bind(this);
+    this.onClickPhotoDown = this.onClickPhotoDown.bind(this);
   }
 
   public componentDidMount() {
@@ -123,10 +125,21 @@ class AdminPageComp extends React.Component<Props, State> {
           onDrop={this.onDrop}
         >
           <button
+            className={styles.button}
             disabled={!selectedPhoto}
             onClick={this.onClickRemovePhotoButton}
           >
             - Remove
+          </button>
+          <button
+            className={styles.button}
+            disabled={!selectedPhoto}
+            onClick={this.onClickPhotoUp}
+          >
+            Up
+          </button>
+          <button disabled={!selectedPhoto} onClick={this.onClickPhotoDown}>
+            Down
           </button>
           <div className={styles.photoContainer}>
             {uploading ? (
@@ -147,19 +160,35 @@ class AdminPageComp extends React.Component<Props, State> {
   }
 
   private fetchFolders() {
+    const { selectedFolder } = this.state;
+
     fetch('/api/folder/structure')
       .then(response => response.json())
-      .then((json: Folder[]) => this.setState({ folders: json }));
+      .then((json: Folder[]) =>
+        this.setState({
+          folders: json,
+          selectedFolder: selectedFolder
+            ? json.find(f => f.id === selectedFolder.id) || null
+            : null
+        })
+      );
   }
 
   private fetchPhotos() {
-    const { selectedFolder } = this.state;
+    const { selectedFolder, selectedPhoto } = this.state;
 
     if (selectedFolder === null) return;
 
     fetch(`/api/photo/present/${selectedFolder.id}`)
       .then(response => response.json())
-      .then((photos: Photo[]) => this.setState({ photos }));
+      .then((photos: Photo[]) =>
+        this.setState({
+          photos,
+          selectedPhoto: selectedPhoto
+            ? photos.find(p => p.id === selectedPhoto.id) || null
+            : null
+        })
+      );
   }
 
   private setSelectedFolder(folder: Folder) {
@@ -265,6 +294,38 @@ class AdminPageComp extends React.Component<Props, State> {
         'Content-Type': 'application/json'
       }
     }).then(() => this.fetchFolders());
+  }
+
+  private onClickPhotoUp() {
+    const { selectedPhoto } = this.state;
+
+    if (!selectedPhoto) return;
+
+    fetch(`/api/photo/${selectedPhoto.id}/order`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        order: Math.max(selectedPhoto.order - 1, 0)
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => this.fetchPhotos());
+  }
+
+  private onClickPhotoDown() {
+    const { selectedPhoto, selectedFolder, photos } = this.state;
+
+    if (!selectedPhoto || !selectedFolder) return;
+
+    fetch(`/api/photo/${selectedPhoto.id}/order`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        order: Math.min(selectedPhoto.order + 1, photos.length - 1)
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(() => this.fetchPhotos());
   }
 
   private onClickRename() {

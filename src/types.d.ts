@@ -26,4 +26,5 @@ interface EncodedPhoto {
 interface Photo {
   id: number;
   name: string;
+  order: number;
 }
