@@ -22,6 +22,32 @@ class GalleryPageComp extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    this.fetchPhotos();
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (this.props.match.params.folderId !== prevProps.match.params.folderId) {
+      this.setState({
+        photos: []
+      });
+
+      this.fetchPhotos();
+    }
+  }
+
+  public render() {
+    const { photos } = this.state;
+
+    return (
+      <div>
+        {photos.map(photo => {
+          return <img key={photo.id} src={photo.data}></img>;
+        })}
+      </div>
+    );
+  }
+
+  private fetchPhotos() {
     const { folderId } = this.props.match.params;
 
     fetch(`/api/photo/present/${folderId}`)
@@ -41,30 +67,6 @@ class GalleryPageComp extends React.Component<Props, State> {
             });
         });
       });
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    if (this.props.match.params.folderId !== prevProps.match.params.folderId) {
-      this.setState({
-        photos: []
-      });
-
-      fetch(`/api/photo/encoded/${this.props.match.params.folderId}`)
-        .then(response => response.json())
-        .then((json: EncodedPhoto[]) => this.setState({ photos: json }));
-    }
-  }
-
-  public render() {
-    const { photos } = this.state;
-
-    return (
-      <div>
-        {photos.map(photo => {
-          return <img key={photo.id} src={photo.data}></img>;
-        })}
-      </div>
-    );
   }
 }
 
