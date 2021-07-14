@@ -62,6 +62,7 @@ class AdminPageComp extends React.Component<Props, State> {
     this.onClickFolderDown = this.onClickFolderDown.bind(this);
     this.onClickPhotoUp = this.onClickPhotoUp.bind(this);
     this.onClickPhotoDown = this.onClickPhotoDown.bind(this);
+    this.onChangeFileInput = this.onChangeFileInput.bind(this);
   }
 
   public componentDidMount() {
@@ -138,9 +139,20 @@ class AdminPageComp extends React.Component<Props, State> {
           >
             Up
           </button>
-          <button disabled={!selectedPhoto} onClick={this.onClickPhotoDown}>
+          <button
+            className={styles.button}
+            disabled={!selectedPhoto}
+            onClick={this.onClickPhotoDown}
+          >
             Down
           </button>
+          <input
+            disabled={!selectedFolder}
+            type="file"
+            multiple={true}
+            onChange={this.onChangeFileInput}
+            value={''}
+          />
           <div className={styles.photoContainer}>
             {uploading ? (
               <progress
@@ -511,11 +523,26 @@ class AdminPageComp extends React.Component<Props, State> {
     event.preventDefault();
     event.stopPropagation();
 
+    this.uploadFiles(event.dataTransfer.files);
+  }
+
+  private onChangeFileInput(event: React.FormEvent<HTMLInputElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (
+      !event.currentTarget.files ||
+      Array.from(event.currentTarget.files).length == 0
+    )
+      return;
+
+    this.uploadFiles(event.currentTarget.files);
+  }
+
+  private uploadFiles(files: FileList) {
     const { selectedFolder } = this.state;
 
     if (selectedFolder === null) return;
-
-    const files = event.dataTransfer.files;
 
     this.setState({
       uploading: true,
@@ -523,50 +550,11 @@ class AdminPageComp extends React.Component<Props, State> {
       amountUploading: files.length
     });
 
-    // const uploads: Promise<any>[] = [];
-
-    this.uploadFiles(Array.from(files));
-
-    // Array.from(files).forEach(file => {
-    //   const formData = new FormData();
-
-    //   formData.append('file', file);
-    //   formData.append('parentFolderId', selectedFolder.id.toString());
-
-    //   uploads.push(
-    //     fetch('/api/photo', {
-    //       method: 'POST',
-    //       body: formData
-    //     })
-    //       .then(response => response.json())
-    //       .then(() =>
-    //         this.setState({ amountUploaded: this.state.amountUploaded + 1 })
-    //       )
-    //   );
-    // });
-
-    // Promise.all(uploads).then(() => {
-    //   this.setState({ uploading: false });
-    //   this.fetchPhotos();
-    // });
-  }
-
-  private uploadFiles(files: File[], currentIndex: number = 0) {
-    console.log(files, currentIndex);
-
-    const { selectedFolder } = this.state;
-
-    if (!selectedFolder) return;
-
-    if (currentIndex >= files.length) {
-      this.setState({ uploading: false });
-      this.fetchPhotos();
-      return;
-    }
-
     const formData = new FormData();
 
-    formData.append('file', files[currentIndex]);
+    Array.from(files).forEach(file => {
+      formData.append('files', file);
+    });
     formData.append('parentFolderId', selectedFolder.id.toString());
 
     fetch('/api/photo', {
@@ -575,8 +563,11 @@ class AdminPageComp extends React.Component<Props, State> {
     })
       .then(response => response.json())
       .then(() => {
-        this.setState({ amountUploaded: this.state.amountUploaded + 1 });
-        this.uploadFiles(files, ++currentIndex);
+        this.setState({
+          amountUploaded: this.state.amountUploaded + 1,
+          uploading: false
+        });
+        this.fetchPhotos();
       });
   }
 }
