@@ -164,14 +164,17 @@ class AdminPageComp extends React.Component<Props, State> {
 
     fetch('/api/folder/structure')
       .then(response => response.json())
-      .then((json: Folder[]) =>
+      .then((json: Folder[]) => {
+        console.log(json);
         this.setState({
           folders: json,
           selectedFolder: selectedFolder
-            ? json.find(f => f.id === selectedFolder.id) || null
+            ? flattenFolderStructure(json).find(
+                f => f.id === selectedFolder.id
+              ) || null
             : null
-        })
-      );
+        });
+      });
   }
 
   private fetchPhotos() {
@@ -520,30 +523,61 @@ class AdminPageComp extends React.Component<Props, State> {
       amountUploading: files.length
     });
 
-    const uploads: Promise<any>[] = [];
+    // const uploads: Promise<any>[] = [];
 
-    Array.from(files).forEach(file => {
-      const formData = new FormData();
+    this.uploadFiles(Array.from(files));
 
-      formData.append('file', file);
-      formData.append('parentFolderId', selectedFolder.id.toString());
+    // Array.from(files).forEach(file => {
+    //   const formData = new FormData();
 
-      uploads.push(
-        fetch('/api/photo', {
-          method: 'POST',
-          body: formData
-        })
-          .then(response => response.json())
-          .then(() =>
-            this.setState({ amountUploaded: this.state.amountUploaded + 1 })
-          )
-      );
-    });
+    //   formData.append('file', file);
+    //   formData.append('parentFolderId', selectedFolder.id.toString());
 
-    Promise.all(uploads).then(() => {
+    //   uploads.push(
+    //     fetch('/api/photo', {
+    //       method: 'POST',
+    //       body: formData
+    //     })
+    //       .then(response => response.json())
+    //       .then(() =>
+    //         this.setState({ amountUploaded: this.state.amountUploaded + 1 })
+    //       )
+    //   );
+    // });
+
+    // Promise.all(uploads).then(() => {
+    //   this.setState({ uploading: false });
+    //   this.fetchPhotos();
+    // });
+  }
+
+  private uploadFiles(files: File[], currentIndex: number = 0) {
+    console.log(files, currentIndex);
+
+    const { selectedFolder } = this.state;
+
+    if (!selectedFolder) return;
+
+    if (currentIndex >= files.length) {
       this.setState({ uploading: false });
       this.fetchPhotos();
-    });
+      return;
+    }
+
+    const formData = new FormData();
+
+    formData.append('file', files[currentIndex]);
+    formData.append('parentFolderId', selectedFolder.id.toString());
+
+    fetch('/api/photo', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => response.json())
+      .then(() => {
+        this.setState({ amountUploaded: this.state.amountUploaded + 1 });
+        this.uploadFiles(files, ++currentIndex);
+      });
   }
 }
 
