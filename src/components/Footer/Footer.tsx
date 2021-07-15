@@ -8,8 +8,8 @@ import facebookIcon from './facebook-icon.png';
 export class Footer extends React.Component {
   public render() {
     return (
-      <div className={styles.container}>
-        <div>
+      <>
+        <div className={styles.container}>
           <a href="https://www.facebook.com/fotograferikkruse">
             <img src={facebookIcon} className={styles.icon} />
           </a>
@@ -17,8 +17,10 @@ export class Footer extends React.Component {
             <img src={instagramIcon} className={styles.icon} />
           </a>
         </div>
-        <div>Copyright Erik Kruse 2021. All Rights Reserved.</div>
-      </div>
+        <div>
+          <div>Copyright Erik Kruse 2021. All Rights Reserved.</div>
+        </div>
+      </>
     );
   }
 }

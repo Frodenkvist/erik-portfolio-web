@@ -5,10 +5,11 @@
 }
 
 .link {
+  font-size: 1em;
   display: inline-block;
   text-decoration: none;
   color: grey;
-  margin-right: 1em;
+  margin-right: 6em;
   background-color: white;
   cursor: pointer;
 }
@@ -26,4 +27,8 @@
   display: flex;
   flex-direction: column;
   text-align: left;
+}
+
+.container {
+  margin-bottom: 3em;
 }

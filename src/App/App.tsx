@@ -7,6 +7,7 @@ import { Navbar } from 'components/Navbar/Navbar';
 import { Footer } from 'components/Footer/Footer';
 import { PrivateRoute } from 'components/PrivateRoute/PrivateRoute';
 import { Glass } from 'components/Glass/Glass';
+import { Header } from 'components/Header/Header';
 
 import { StartPage } from 'containers/StartPage/StartPage';
 import { LoginPage } from 'containers/LoginPage/LoginPage';
@@ -94,6 +95,7 @@ export class App extends React.Component<{}, State> {
             {notification ? (
               <ScreenNotification notification={notification} />
             ) : null}
+            <Header />
             <Navbar />
             <div>
               <Switch>

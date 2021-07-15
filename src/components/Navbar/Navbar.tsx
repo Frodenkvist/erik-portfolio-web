@@ -40,7 +40,7 @@ class NavbarComp extends React.Component<Props, State> {
     const hash = location.hash;
 
     return (
-      <div>
+      <div className={styles.container}>
         <nav>
           <ul className={styles.linksContainers}>
             <li>
