@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as styles from './GalleryPage.scss';
 
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
@@ -39,9 +40,16 @@ class GalleryPageComp extends React.Component<Props, State> {
     const { photos } = this.state;
 
     return (
-      <div>
+      <div className={styles.container}>
         {photos.map(photo => {
-          return <img key={photo.id} src={photo.data}></img>;
+          return (
+            <div
+              className={styles.photoContainer}
+              style={{ background: `#eee url(${photo.data}) center center` }}
+            >
+              {/* <img key={photo.id} src={photo.data}></img> */}
+            </div>
+          );
         })}
       </div>
     );
