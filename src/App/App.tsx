@@ -90,27 +90,29 @@ export class App extends React.Component<{}, State> {
             removeNotification: this.removeNotification
           }}
         >
-          <div className={styles.container}>
+          <>
             {glassCount > 0 ? <Glass /> : null}
             {notification ? (
               <ScreenNotification notification={notification} />
             ) : null}
-            <Header />
-            <Navbar />
-            <div>
-              <Switch>
-                <Route path="/" component={StartPage} exact={true} />
-                <Route path="/login" component={LoginPage} />
-                <PrivateRoute
-                  path="/admin"
-                  component={AdminPage}
-                  access={!!userContext}
-                />
-                <Route path="/galleri/:folderId" component={GalleryPage} />
-              </Switch>
+            <div className={styles.container}>
+              <Header />
+              <Navbar />
+              <div>
+                <Switch>
+                  <Route path="/" component={StartPage} exact={true} />
+                  <Route path="/login" component={LoginPage} />
+                  <PrivateRoute
+                    path="/admin"
+                    component={AdminPage}
+                    access={!!userContext}
+                  />
+                  <Route path="/galleri/:folderId" component={GalleryPage} />
+                </Switch>
+              </div>
+              <Footer />
             </div>
-            <Footer />
-          </div>
+          </>
         </AppContextProvider>
       </BrowserRouter>
     );

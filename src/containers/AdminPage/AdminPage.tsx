@@ -227,7 +227,7 @@ class AdminPageComp extends React.Component<Props, State> {
     appContext.addNotification({
       autoCloseOnClick: false,
       content: (
-        <div>
+        <div className={styles.notificationContainer}>
           <h3>Add Folder</h3>
           <div>
             <label htmlFor="addFolderName">Folder Name: </label>
@@ -257,7 +257,7 @@ class AdminPageComp extends React.Component<Props, State> {
     appContext.addNotification({
       autoCloseOnClick: false,
       content: (
-        <div>
+        <div className={styles.notificationContainer}>
           <h3>
             Are you sure you want to remove folder: {selectedFolder?.name}?
           </h3>
@@ -350,7 +350,7 @@ class AdminPageComp extends React.Component<Props, State> {
     appContext.addNotification({
       autoCloseOnClick: false,
       content: (
-        <div>
+        <div className={styles.notificationContainer}>
           <h3>Rename Folder {selectedFolder?.name}</h3>
           <div>
             <label htmlFor="renameFolderName">Folder Name: </label>
@@ -472,7 +472,7 @@ class AdminPageComp extends React.Component<Props, State> {
     appContext.addNotification({
       autoCloseOnClick: false,
       content: (
-        <div>
+        <div className={styles.notificationContainer}>
           <h3>Are you sure you want to remove photo: {selectedPhoto?.name}?</h3>
           <div className={styles.buttonContainer}>
             <button onClick={this.onClickRemovePhoto} className={styles.button}>

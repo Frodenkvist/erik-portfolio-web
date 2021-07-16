@@ -1,6 +1,7 @@
 import * as React from 'react';
 import * as styles from './ScreenNotification.scss';
 import { AppContext, withAppContext } from 'components/utils/AppContext';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 export interface ScreenNotificationWrapper {
   content: string | JSX.Element;
@@ -8,7 +9,7 @@ export interface ScreenNotificationWrapper {
   autoCloseOnClick?: boolean;
 }
 
-interface Props {
+interface Props extends RouteComponentProps {
   notification: ScreenNotificationWrapper;
   appContext: AppContext;
 }
@@ -18,6 +19,14 @@ class ScreenNotificationComp extends React.Component<Props, {}> {
     super(props);
 
     this.onClickNotification = this.onClickNotification.bind(this);
+  }
+
+  public componentDidUpdate(prevProps: Props) {
+    const { location, appContext } = this.props;
+
+    if (prevProps.location.pathname !== location.pathname) {
+      appContext.removeNotification();
+    }
   }
 
   public render() {
@@ -55,4 +64,6 @@ class ScreenNotificationComp extends React.Component<Props, {}> {
   }
 }
 
-export const ScreenNotification = withAppContext(ScreenNotificationComp);
+export const ScreenNotification = withRouter(
+  withAppContext(ScreenNotificationComp)
+);

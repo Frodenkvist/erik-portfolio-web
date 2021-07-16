@@ -7,7 +7,8 @@
 .photoContainer {
   flex-grow: 1;
   width: 19%;
-  margin: 0.5%;
+  margin-right: 1%;
+  margin-bottom: 0.5%;
   cursor: pointer;
 }
 
@@ -15,4 +16,21 @@
   object-fit: cover;
   width: 12.5em;
   height: 12.5em;
+}
+
+.closeButton {
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  width: 1em;
+  height: 1em;
+}
+
+.closeButton:before {
+  content: '✕';
+}
+
+.bigPhotoContainer {
+  position: relative;
 }

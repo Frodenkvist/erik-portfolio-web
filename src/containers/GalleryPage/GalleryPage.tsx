@@ -23,6 +23,8 @@ class GalleryPageComp extends React.Component<Props, State> {
     this.state = {
       photos: []
     };
+
+    this.closeBigPhoto = this.closeBigPhoto.bind(this);
   }
 
   componentDidMount() {
@@ -48,10 +50,7 @@ class GalleryPageComp extends React.Component<Props, State> {
           return (
             <div
               className={styles.photoContainer}
-              // style={{
-              //   background: `#eee url(${photo.data}) center center`
-              //   // backgroundSize: 'auto auto'
-              // }}
+              onClick={this.onClickPhoto(photo)}
             >
               <img src={photo.data} className={styles.photoImage} />
             </div>
@@ -83,7 +82,30 @@ class GalleryPageComp extends React.Component<Props, State> {
       });
   }
 
-  private onClickPhoto() {}
+  private onClickPhoto(photo: EncodedPhoto) {
+    return () => {
+      const { appContext } = this.props;
+
+      appContext.addNotification({
+        autoCloseOnClick: false,
+        content: (
+          <div className={styles.bigPhotoContainer}>
+            <img src={photo.data} />
+            <span
+              className={styles.closeButton}
+              onClick={this.closeBigPhoto}
+            ></span>
+          </div>
+        )
+      });
+    };
+  }
+
+  private closeBigPhoto() {
+    const { appContext } = this.props;
+
+    appContext.removeNotification();
+  }
 }
 
 export const GalleryPage = withAppContext(withRouter(GalleryPageComp));
