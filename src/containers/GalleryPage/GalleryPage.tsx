@@ -2,12 +2,15 @@ import * as React from 'react';
 import * as styles from './GalleryPage.scss';
 
 import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { AppContext, withAppContext } from 'components/utils/AppContext';
 
 interface Params {
   folderId: string;
 }
 
-interface Props extends RouteComponentProps<Params> {}
+interface Props extends RouteComponentProps<Params> {
+  appContext: AppContext;
+}
 
 interface State {
   photos: EncodedPhoto[];
@@ -45,9 +48,12 @@ class GalleryPageComp extends React.Component<Props, State> {
           return (
             <div
               className={styles.photoContainer}
-              style={{ background: `#eee url(${photo.data}) center center` }}
+              // style={{
+              //   background: `#eee url(${photo.data}) center center`
+              //   // backgroundSize: 'auto auto'
+              // }}
             >
-              {/* <img key={photo.id} src={photo.data}></img> */}
+              <img src={photo.data} className={styles.photoImage} />
             </div>
           );
         })}
@@ -76,6 +82,8 @@ class GalleryPageComp extends React.Component<Props, State> {
         });
       });
   }
+
+  private onClickPhoto() {}
 }
 
-export const GalleryPage = withRouter(GalleryPageComp);
+export const GalleryPage = withAppContext(withRouter(GalleryPageComp));

@@ -1,11 +1,18 @@
 .container {
   display: flex;
   flex-wrap: wrap;
+  min-width: 100%;
 }
 
 .photoContainer {
   flex-grow: 1;
   width: 19%;
-  padding-top: 19%;
   margin: 0.5%;
+  cursor: pointer;
+}
+
+.photoImage {
+  object-fit: cover;
+  width: 12.5em;
+  height: 12.5em;
 }
